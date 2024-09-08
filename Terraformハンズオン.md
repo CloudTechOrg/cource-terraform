@@ -16,7 +16,6 @@ C:\HashiCorp\Terraform\
 ```
 作成後Terraformの公式サイトからダウンロードしたzipに格納されている`terraform.exe`ファイルを格納します。
 
-![alt text](image.png)
 
 ## パスを通す
 コマンドプロンプトやPowershellなどでコマンドを実行するとき、そのコマンドをあらかじめ指定されているフォルダの中から探します。\
@@ -32,7 +31,11 @@ GUIでシステムのプロパティから編集してもいいですし、Power
 ## AWSのクレデンシャル管理方法
 Terraformには様々なクレデンシャル管理方法があります。
 
-- 環境変数を利用する
+- IAMユーザ、Identity Centerユーザ等のクレデンシャルを利用する。
+```shell
+set AWS_ACCESS_KEY={アクセスキーID}
+set AWS_SECRET_ACCESS_KEY={シークレット}
+```
 
 - IAMロールを利用する
 
@@ -42,8 +45,33 @@ Terraformはその特性上、リソースの作成、削除など強い権限�
 https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/terraform-aws-provider-best-practices/security.html
 
 ```shell
-set AWS_ACCESS_KEY {アクセスキーID}
-set AWS_SECRET_ACCESS_KEY
+set AWS_ACCESS_KEY={アクセスキーID}
+set AWS_SECRET_ACCESS_KEY={シークレット}
 ```
 
-## 
+## terraform initコマンド
+Terraformは最初AWSやAzureなどを操作するプロバイダのコードは含まれていません。
+Terraform　Initコマンドを実行することで、コード内で必要なプロバイダを自動的にダウンロードします
+このコードは実行したディレクトリに格納されるので、Git等で管理している場合はGitignoreに記載しておきましょう
+
+### .gitignoreの設定
+
+```
+# ローカル .terraform ディレクトリ
+**/.terraform/*
+
+# .tfstate ファイル
+*.tfstate
+*.tfstate.*
+
+# クラッシュログファイル
+crash.log
+
+# 除外されるすべての .tfvars ファイル
+*.tfvars
+
+# CLI 構成ファイル
+.terraformrc
+terraform.rc
+
+```

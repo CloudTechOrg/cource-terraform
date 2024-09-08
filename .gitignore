@@ -1,0 +1,16 @@
+# ローカル .terraform ディレクトリ
+**/.terraform/*
+
+# .tfstate ファイル
+*.tfstate
+*.tfstate.*
+
+# クラッシュログファイル
+crash.log
+
+# 除外されるすべての .tfvars ファイル
+*.tfvars
+
+# CLI 構成ファイル
+.terraformrc
+terraform.rc
