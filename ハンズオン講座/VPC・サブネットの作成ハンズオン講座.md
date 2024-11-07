@@ -22,9 +22,6 @@
 5. ポリシーを直接アタッチを選択
 6. AdministratorAccess をアタッチ
 7. Userの作成
-
-![alt text](image.png)
-
 8. Userのセキュリティ認証情報に移動
 9. アクセスキーの作成をクリック
 10. その他をクリック
