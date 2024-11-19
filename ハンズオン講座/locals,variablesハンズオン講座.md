@@ -145,9 +145,11 @@ resource "aws_subnet" "web_subnet" {
 これですっきりしましたね！
 
 次に以下をコピーして作成します
+このTerraformのコードはパブリックサブネットの作成と
+EC2インスタンスをデプロイしその中にNginxでウェブサーバを立てる構成になっています。
 どのような内容かさらっと確認しましょう！
 
-```
+```terraform
 provider "aws" {
  region = "ap-northeast-1"
 }
