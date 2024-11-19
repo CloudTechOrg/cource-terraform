@@ -176,7 +176,7 @@ resource "aws_subnet" "web_subnet" {
 
 
 ## EC2のデプロイ variableブロック変数の対話的設定の体験
-
+**セリフ**
 > では次に少し難易度上がりますが、EC2でウェブサーバを作るコードを扱ってみます \
 > 以下をコピーして作成します \
 > このTerraformのコードはVPCとパブリックサブネットの作成と \
@@ -293,9 +293,10 @@ resource "aws_instance" "web_ec2" {
         dnf install -y nginx
         cat <<HTML > /usr/share/nginx/html/index.html
             <div style="text-align:center; font-size:1.5em; color:#333; margin:20px; line-height:1.8;">
-                <b>環境名: ${var.env}</b><br>
-                <b>アプリ名: ${local.app_name}</b><br>
-                <b>プレフィクス名: ${local.name_prefix}</b>
+                <b>env: ${var.env}</b><br>
+                <b>app_name: ${local.app_name}</b><br>
+                <b>name_prefix: ${local.name_prefix}</b>
+                <b>myip: ${var.myip}</b>
             </div>
         HTML
         systemctl enable --now nginx
