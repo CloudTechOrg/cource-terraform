@@ -1,9 +1,12 @@
-ではハンズオン進めていきます。
-本ハンズオンではEC2を作成し、そこにアクセスするところまで試してみます。
-その過程でlocalsブロック、variableブロックを活用していきましょう
 
-# 1. main.tfの編集
+> ではハンズオン進めていきます。
+> 本ハンズオンではEC2を作成し、そこにアクセスするところまで試してみます。
+> その過程でlocalsブロック、variableブロックを活用していきましょう
 
+
+> まずVPCとサブネットのデプロイを行っていきます。
+
+# 1. VPC、サブネットのデプロイ
 1. C:\Terrafrom\Handsonフォルダに移動
 2. main.tfを編集
 3. 以下の形にする。
@@ -35,8 +38,12 @@ resource "aws_subnet" "web_subnet" {
 6. terraform plan
 7. terraform apply
 
-このままだと何のvpcか、サブネットかわからないため、各リソースにhandsonとつけたいと思います。
-各リソース毎回打っていると管理が大変なので一度、localsで変数設定を行い、それを各Nameタグ内で使っていきます。
+セリフ
+> このままだと何のvpcか、サブネットかわからないため、ウェブサーバ関連のリソースとわかるようにリソースの名前の頭に`web`とつけたいと思います。
+> 各リソース個別に編集すると管理が大変なので一度、localsで変数設定を行い、それを各Nameタグ内で${}を用い使っていきます。
+> VSCodeを開き以下編集をおこなう
+
+## localsブロックの活用
 
 ```terraform
 provider "aws" {
@@ -66,8 +73,14 @@ resource "aws_subnet" "web_subnet" {
 }
 ```
 
-では次にvariableブロックを利用して環境名を付けてあげましょう
-今回はハンズオンですが仮にprodとつけようと思います。
+1. terraform plan
+2. terraform apply
+3. 名前が変わっていることの確認(vpc,サブネット)
+
+
+## variableブロックの活用
+> では次にvariableブロックを利用して環境名を付けてあげましょう
+> 今回はハンズオン環境ですのでhandsonとつけようと思います。
 
 ```terraform
 provider "aws" {
@@ -141,13 +154,22 @@ resource "aws_subnet" "web_subnet" {
 }
 
 ```
+> これですっきりしましたね！
+> ではterraform planを実行していきましょう
 
-これですっきりしましたね！
+1. terraform plan
 
-次に以下をコピーして作成します
-このTerraformのコードはパブリックサブネットの作成と
-EC2インスタンスをデプロイしその中にNginxでウェブサーバを立てる構成になっています。
-どのような内容かさらっと確認しましょう！
+> コードは書き換えましたが、リソースの変化はないため、No Changeとでていますね！
+> ここまででlocals,variablesの基本的な扱い方をみていきました。
+
+> では次に少し難易度上がりますが、EC2でウェブサーバを作るコードを扱ってみます
+> 以下をコピーして作成します
+> このTerraformのコードはVPCとパブリックサブネットの作成と
+> EC2インスタンスをデプロイしその中にNginxでウェブサーバを立てる構成になっています。
+> また自分のグローバルIPアドレスをvariableブロックで設定し、セキュリティグループのインバウンドルールポート80番に許可設定をいれるようにしています。
+> どのような内容か確認していきましょう！
+
+
 
 ポイント
 ・myipはdefaultの設定をしていないので対話モードで設定
@@ -161,7 +183,7 @@ provider "aws" {
 
 variable "env" {
     type = string
-    default = "prod"
+    default = "handson"
 }
 
 variable "myip" {
@@ -170,7 +192,7 @@ variable "myip" {
 }
 
 locals{
-    app_name = "handson-web"
+    app_name = "web"
     name_prefix = "${var.env}-${local.app_name}"
 }
 
