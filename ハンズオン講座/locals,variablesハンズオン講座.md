@@ -1,7 +1,9 @@
+各コードは動画下に記載する想定です
+
 **セリフ**
 > ではハンズオン進めていきます。\
 > 本ハンズオンではlocalsブロック、variableブロックの動きを確認したあと \
-> EC2でウェブサーバを作成し、そこにアクセスするところまで試してみます。\
+> EC2でウェブサーバを作成し、そこにアクセスするところまで試してみます。
 
 > ではまずVPCとサブネットのデプロイを行っていきます。
 
@@ -49,6 +51,7 @@ provider "aws" {
  region = "ap-northeast-1"
 }
 
+# 追加
 locals{
     app_name = "web"
 }
@@ -57,7 +60,7 @@ resource "aws_vpc" "web_vpc" {
 
   cidr_block = "10.0.0.0/16"
   tags = {
-    Name = "${local.app_name}-vpc"
+    Name = "${local.app_name}-vpc" # 変更
   }
 }
 
@@ -67,7 +70,7 @@ resource "aws_subnet" "web_subnet" {
 
   cidr_block = "10.0.0.0/24"
   tags = {
-    Name = "${local.app_name}-public_subnet"
+    Name = "${local.app_name}-public_subnet" # 変更
   }
 }
 ```
@@ -86,6 +89,7 @@ provider "aws" {
  region = "ap-northeast-1"
 }
 
+# 追加
 variable "env" {
     type = string
     default = "handson"
@@ -99,7 +103,7 @@ resource "aws_vpc" "web_vpc" {
 
   cidr_block = "10.0.0.0/16"
   tags = {
-    Name = "${var.env}-${local.app_name}-vpc"
+    Name = "${var.env}-${local.app_name}-vpc" # 変更
   }
 }
 
@@ -109,13 +113,14 @@ resource "aws_subnet" "web_subnet" {
 
   cidr_block = "10.0.0.0/24"
   tags = {
-    Name = "${var.env}-${local.app_name}-public_subnet"
+    Name = "${var.env}-${local.app_name}-public_subnet" # 変更
   }
 }
 ```
 
 **セリフ**
-> はいではこの状態で実行してみます。\
+> はいではこの状態で実行してみます。
+
 1. terraform plan
 2. terraform apply
 3. 名前が変わっていることの確認(vpc,サブネット)
@@ -136,7 +141,7 @@ variable "env" {
 }
 
 locals{
-    app_name = "handson-web"
+    app_name = "handson-web" # 追加
     name_prefix = "${var.env}-${local.app_name}"
 }
 
@@ -144,7 +149,7 @@ resource "aws_vpc" "web_vpc" {
 
   cidr_block = "10.0.0.0/16"
   tags = {
-    Name = "${local.name_prefix}-vpc"
+    Name = "${local.name_prefix}-vpc" # 変更
   }
 }
 
@@ -154,7 +159,7 @@ resource "aws_subnet" "web_subnet" {
 
   cidr_block = "10.0.0.0/24"
   tags = {
-    Name = "${local.name_prefix}-public_subnet"
+    Name = "${local.name_prefix}-public_subnet" # 変更
   }
 }
 
@@ -167,7 +172,7 @@ resource "aws_subnet" "web_subnet" {
 
 **セリフ**
 > コードは書き換えましたが、リソースの変化はないため、No Changeとでていますね！ \
-> ここまででlocals,variablesの基本的な扱い方をみていきました。 \
+> ここまででlocals,variablesの基本的な扱い方をみていきました。 
 
 
 ## EC2のデプロイ variableブロック変数の対話的設定の体験
@@ -177,8 +182,8 @@ resource "aws_subnet" "web_subnet" {
 > このTerraformのコードはVPCとパブリックサブネットの作成と \
 > EC2インスタンスをデプロイしその中にNginxでウェブサーバを立てる構成になっています。 \
 > また自分のグローバルIPアドレスをvariableブロックで設定し、セキュリティグループのインバウンドルールポート80番に許可設定をいれるようにしています。 \
-> どのような内容か確認していきましょう！
-
+> 対話モードでvariableブロックの設定を体験してみましょう！
+> ではまずコードの内容を確認していきましょう！
 
 **ポイント**
 ・myipはdefaultの設定をしていないので対話モードで設定 \
