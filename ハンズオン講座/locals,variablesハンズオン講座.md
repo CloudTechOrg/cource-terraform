@@ -149,6 +149,11 @@ resource "aws_subnet" "web_subnet" {
 EC2インスタンスをデプロイしその中にNginxでウェブサーバを立てる構成になっています。
 どのような内容かさらっと確認しましょう！
 
+ポイント
+・myipはdefaultの設定をしていないので対話モードで設定
+・discriptionでグローバルＩＰを調べるサイトを書いているので簡単に調べられるようにしている
+・ユーザデータを用い環境変数名と変数の中身をhtmlサイトに表示するようにしている
+
 ```terraform
 provider "aws" {
  region = "ap-northeast-1"
