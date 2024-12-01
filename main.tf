@@ -87,6 +87,8 @@ resource "aws_instance" "web_ec2" {
     #!/bin/bash
         dnf update -y
         dnf install -y nginx
+        systemctl enable --now nginx
+
         cat <<HTML > /usr/share/nginx/html/index.html
             <div style="text-align:center; font-size:1.5em; color:#333; margin:20px; line-height:1.8;">
                 <b>環境名: ${var.env}</b><br>
@@ -94,7 +96,6 @@ resource "aws_instance" "web_ec2" {
                 <b>プレフィクス名: ${local.name_prefix}</b>
             </div>
         HTML
-        systemctl enable --now nginx
   EOF
 
   tags = {
