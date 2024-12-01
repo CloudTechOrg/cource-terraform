@@ -2,19 +2,8 @@ provider "aws" {
  region = "ap-northeast-1"
 }
 
-variable "env" {
-    type = string
-    default = "prod"
-}
-
-variable "myip" {
-    type = string
-    description = "Check-> https://www.whatismyip.com/"
-    default = "0.0.0.0"
-}
-
 locals{
-    app_name = "handson-web"
+    app_name = "web"
     name_prefix = "${var.env}-${local.app_name}"
 }
 
@@ -37,7 +26,6 @@ resource "aws_subnet" "web_subnet" {
   }
 }
 
-
 resource "aws_route_table" "web_public_rtb" {
   vpc_id = aws_vpc.web_vpc.id
 
@@ -49,6 +37,11 @@ resource "aws_route_table" "web_public_rtb" {
   tags = {
     Name = "${local.name_prefix}-public-rtb"
   }
+}
+
+resource "aws_route_table_association" "web_public_rtb_assoc" {
+  subnet_id      = aws_subnet.web_subnet.id
+  route_table_id = aws_route_table.web_public_rtb.id
 }
 
 resource "aws_internet_gateway" "web_igw" {
@@ -73,6 +66,13 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["${var.myip}/32"] # var.myipからのHTTPアクセスを許可
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = {
     Name = "${local.name_prefix}-sg"
   }
@@ -81,39 +81,25 @@ resource "aws_security_group" "web_sg" {
 resource "aws_instance" "web_ec2" {
   ami                         = "ami-094dc5cf74289dfbc" 
   instance_type               = "t2.micro"
-  security_groups             = [aws_security_group.web_sg.name]
+  security_groups             = [aws_security_group.web_sg.id]
+  subnet_id = aws_subnet.web_subnet.id
 
   user_data = <<-EOF
-    #!/bin/bash
-        dnf update -y
-        dnf install -y nginx
-        systemctl enable --now nginx
-
-        cat <<HTML > /usr/share/nginx/html/index.html
-            <div style="text-align:center; font-size:1.5em; color:#333; margin:20px; line-height:1.8;">
-                <b>環境名: ${var.env}</b><br>
-                <b>アプリ名: ${local.app_name}</b><br>
-                <b>プレフィクス名: ${local.name_prefix}</b>
-            </div>
-        HTML
+#!/bin/bash
+dnf update -y
+dnf install -y nginx
+systemctl enable --now nginx
+cat <<EOG > /usr/share/nginx/html/index.html
+    <div style="text-align:center; font-size:1.5em; color:#333; margin:20px; line-height:1.8;">
+        <b>env: ${var.env}</b><br>
+        <b>app_name: ${local.app_name}</b><br>
+        <b>name_prefix: ${local.name_prefix}</b>
+        <b>myip: ${var.myip}</b>
+    </div>
+EOG
   EOF
 
   tags = {
     Name = "${local.name_prefix}-ec2"
   }
-}
-
-
-# 子モジュール
-output "subnet_id" {
-  value = aws_subnet.example.id
-}
-
-
-# ルートモジュール
-module "network" {
-  source = "./network"
-}
-  resource "aws_instance" "example" {
-  subnet_id = module.network.subnet_id
 }
