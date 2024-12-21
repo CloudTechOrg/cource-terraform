@@ -1,0 +1,68 @@
+プロバイダブロックの作成
+```terraform
+provider "aws" {
+ region = "ap-northeast-1"
+}
+```
+
+プロセス環境変数の設定
+```powershell
+$Env:AWS_ACCESS_KEY_ID="アクセスキー"
+$Env:AWS_SECRET_ACCESS_KEY="シークレットアクセスキー"
+```
+
+VPCのresourceブロックの作成
+```
+resource "aws_vpc" "terra_vpc" {
+
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    Name = "aws_vpc_name"
+  }
+}
+```
+
+VPCの名前の変更
+```
+resource "aws_vpc" "terra_vpc" {
+
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    Name = "aws_vpc_handson"
+  }
+}
+```
+
+サブネットのリソース追加
+```terraform
+resource "aws_subnet" "terra_subnet" {
+
+  vpc_id = aws_vpc.terra_vpc.id
+
+  cidr_block = "10.0.0.0/24"
+  tags = {
+    Name = "aws_subnet_name"
+  }
+}
+```
+
+以下の二つのリソースをコメントアウトして削除
+```
+# resource "aws_vpc" "terra_vpc" {
+
+#   cidr_block = "10.0.0.0/16"
+#   tags = {
+#     Name = "aws_vpc_handson"
+#   }
+# }
+
+# resource "aws_subnet" "terra_subnet" {
+
+#   vpc_id = aws_vpc.terra_vpc.id
+
+#   cidr_block = "10.0.0.0/24"
+#   tags = {
+#     Name = "aws_subnet_name"
+#   }
+# }
+```
